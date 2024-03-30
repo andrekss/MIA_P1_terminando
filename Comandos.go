@@ -65,7 +65,6 @@ func MKDisk() { // go run *.go mkdisk -size=30 -fit=FF -unit=K
 		return
 	}
 	defer Arch.Close()
-
 }
 
 func RMDisk() { // go run *.go rmdisk -driveletter=A
@@ -94,12 +93,13 @@ func FDisk() { //go run *.go fdisk -size=300 -driveletter=A -name=Particion1 -un
 	name := flag.String("name", "", "Nombre de la partición")
 	// opcional
 	unit := flag.String("unit", "K", "Unidad del tamaño (opcional, B/K/M)")
-	types := flag.String("type", "P", "Tipo de partición (opcional, P/E/L)")
-	fit := flag.String("fit", "WF", "Ajuste Partición")       // BF FF WF
-	delete := flag.String("delete", "", "Eliminar partición") // Se usa junto a name, size y driveletter
-	add := flag.Int("add", 0, "Agregar espacio")              // agregar o quitar espacio en una partición se usa con unit driveletter y name
+	types := flag.String("type", "P", "Tipo de partición (opcional, P/E/L)") // Extendida trae un EBR
+	fit := flag.String("fit", "WF", "Ajuste Partición")                      // BF FF WF
+	delete := flag.String("delete", "", "Eliminar partición")                // Se usa junto a name, size y driveletter
+	add := flag.Int("add", 0, "Agregar espacio")                             // agregar o quitar espacio en una partición se usa con unit driveletter y name
 
 	flag.CommandLine.Parse(os.Args[2:])
+
 	ruta := "./MIA/P1/" + strings.ToUpper(*driveletter) + ".dsk"
 	// Verificar si se proporciona el tamaño
 	if *size <= 0 {
@@ -107,7 +107,6 @@ func FDisk() { //go run *.go fdisk -size=300 -driveletter=A -name=Particion1 -un
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
-
 	build.Existencia((*driveletter)[0]) // verificación
 
 	*size = build.Conversion(*unit, *size)
@@ -127,54 +126,13 @@ func FDisk() { //go run *.go fdisk -size=300 -driveletter=A -name=Particion1 -un
 	copy(Partición.Fit[:], fits)
 	// fin del llenado de la nueva partición
 
-	if strings.EqualFold(*delete, "Full") { // eiminar partición
-		build.EliminarParticiones(*driveletter, name1)
-	} else if *add == 0 { // agregar partición
-
-		Arch, err := build.AbrirArchivo(ruta)
-		if err != nil {
-			return
-		}
-
-		var Editable structs.MBR
-		//fmt.Print(Editable.partitions[0])
-		build.LeerArchivo(Arch, &Editable, 0)
-
-		//build.Escribir(Arch, Partición, 1)
-
-		// 4 particiones
-		for i := 0; i < 4; i++ {
-			if Editable.Partitions[i].Size == 0 {
-				Editable.Partitions[i] = Partición // agregamos la partición
-
-				fmt.Println(Editable.Partitions[i])
-			}
-		}
-		build.Escribir(Arch, Editable, 0) // sobrescribimos
-		defer Arch.Close()                // cerramos el archivo para todo
-
-	} else { // agregar o quitar espacio
-		*add = build.Conversion(*unit, *add)
-
-		Arch, err := build.AbrirArchivo(ruta)
-		if err != nil {
-			return
-		}
-		var Editable structs.MBR
-		build.LeerArchivo(Arch, &Editable, 0)
-		for i := 0; i < 4; i++ {
-			if Editable.Partitions[i].Name == *&name1 {
-				Editable.Partitions[i].Size += int32(*add)
-			}
-		}
-		build.Escribir(Arch, Editable, 0) // sobrescribimos
-		defer Arch.Close()                // cerramos el archivo para todo
-	}
+	// aqui ejecutamos todo el comando
+	build.Funcionalidades(*driveletter, *delete, name1, Partición, ruta, *add, *unit)
 
 	fmt.Printf("Creando una partición con tamaño: %d bytes\n", *size)
 }
 
-func Mount() {
+func Mount() { // go run *.go mount -driveletter=A -name=Particion1
 	driveletter := flag.String("driveletter", "", "Archivo a elegir")
 	name := flag.String("name", "", "Nombre de la partición")
 	flag.CommandLine.Parse(os.Args[2:])
@@ -186,19 +144,19 @@ func Mount() {
 		return
 	}
 
-	var TempMBR structs.MBR
-	// Read object from bin file
-	if err := build.LeerArchivo(file, &TempMBR, 0); err != nil {
+	var MBR structs.MBR
+
+	if err := build.LeerArchivo(file, &MBR, 0); err != nil {
 		return
 	}
 
 	var index int = -1
 	var count = 0
-	// Iterate over the partitions
+	// buscamos la partición especidifica
 	for i := 0; i < 4; i++ {
-		if TempMBR.Partitions[i].Size != 0 {
+		if MBR.Partitions[i].Size != 0 {
 			count++
-			if strings.Contains(string(TempMBR.Partitions[i].Name[:]), *name) {
+			if strings.Contains(string(MBR.Partitions[i].Name[:]), *name) {
 				index = i
 				break
 			}
@@ -207,22 +165,88 @@ func Mount() {
 
 	// id = DriveLetter + Correlative + 19
 
-	id := strings.ToUpper(*driveletter) + strconv.Itoa(count) + "19"
+	id := strings.ToUpper(*driveletter) + strconv.Itoa(count) + "80"
 
-	copy(TempMBR.Partitions[index].Status[:], "1")
-	copy(TempMBR.Partitions[index].Id[:], id)
+	copy(MBR.Partitions[index].Status[:], "1") // verifica que esta montada
+	copy(MBR.Partitions[index].Id[:], id)
 
-	// Overwrite the MBR
-	if err := build.Escribir(file, TempMBR, 0); err != nil {
+	if err := build.Escribir(file, MBR, 0); err != nil {
 		return
 	}
 
-	var TempMBR2 structs.MBR
-	// Read object from bin file
-	if err := build.LeerArchivo(file, &TempMBR2, 0); err != nil {
-		return
-	}
+	/*
+	      solo para imprimir
+	   	var MBR2 structs.MBR
+	   	if err := build.LeerArchivo(file, &MBR2, 0); err != nil {
+	   		return
+	   	}*/
 
-	// Close bin file
+	fmt.Print("Se a montado la partición" + *name)
+
 	defer file.Close()
+}
+
+func Unmount() { // go run *.go Unmount -id=A180
+	id := flag.String("id", "", "id de la particioón")
+	flag.CommandLine.Parse(os.Args[2:])
+
+	i := 0
+	for {
+		ruta := "./MIA/P1/" + string(build.Alfabeto[i]) + ".dsk"
+		var revision structs.MBR
+		file, err := build.AbrirArchivo(ruta)
+		if err != nil {
+			break
+		}
+
+		if err := build.LeerArchivo(file, &revision, 0); err != nil {
+			return
+		}
+
+		for j := 0; j < 4; j++ { // recorremos las particiones
+			var idd [4]byte
+			copy(idd[:], *id)
+
+			if revision.Partitions[j].Id == idd {
+				copy(revision.Partitions[j].Status[:], "0") // indicamos que se desmontó
+				build.Escribir(file, revision, 0)
+
+				defer file.Close()
+				fmt.Print("Se a desmontó la partición " + string(revision.Partitions[j].Name[:]))
+				break
+			}
+		}
+		i += 1
+	}
+}
+
+func MKfs() {
+
+	id := flag.String("id", "", "id partición montada")
+	//types := flag.String("type", "Full", "tipo de formateo")
+	//fs := flag.String("fs", "2fs", "Formateo a otro sistema")
+
+	flag.CommandLine.Parse(os.Args[2:])
+	i := 0
+	for {
+		ruta := "./MIA/P1/" + string(build.Alfabeto[i]) + ".dsk"
+		var revision structs.MBR
+		file, err := build.AbrirArchivo(ruta)
+		if err != nil {
+			break
+		}
+
+		if err := build.LeerArchivo(file, &revision, 0); err != nil {
+			return
+		}
+
+		for j := 0; j < 4; j++ { // particiones
+			var idd [4]byte
+			copy(idd[:], *id)
+
+			if revision.Partitions[j].Id == idd {
+			}
+		}
+		i += 1
+	}
 }

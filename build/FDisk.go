@@ -42,7 +42,7 @@ func EliminarParticiones(driveletter string, name [16]byte) {
 	}
 	var Mbr structs.MBR
 	// Leer
-	if err := LeerArchivo(arch, Mbr, 0); err != nil { // posición 0 del mbr
+	if err := LeerArchivo(arch, &Mbr, 0); err != nil { // posición 0 del mbr
 		return
 	}
 	var vacio structs.Partition
@@ -77,5 +77,51 @@ func Conversion(unit string, add int) int {
 
 		os.Exit(1)
 		return 0
+	}
+}
+
+func Funcionalidades(driveletter string, delete string, name1 [16]byte, Partición structs.Partition, ruta string, add int, unit string) {
+	if strings.EqualFold(delete, "Full") { // eiminar partición
+		EliminarParticiones(driveletter, name1)
+	} else if add == 0 { // agregar partición
+
+		Arch, err := AbrirArchivo(ruta)
+		if err != nil {
+			return
+		}
+
+		var Editable structs.MBR
+		//fmt.Print(Editable.partitions[0])
+		LeerArchivo(Arch, &Editable, 0)
+
+		//Escribir(Arch, Partición, 1)
+
+		// 4 particiones
+		for i := 0; i < 4; i++ {
+			if Editable.Partitions[i].Size == 0 {
+				Editable.Partitions[i] = Partición // agregamos la partición
+
+				fmt.Println(Editable.Partitions[i])
+			}
+		}
+		Escribir(Arch, Editable, 0) // sobrescribimos
+		defer Arch.Close()          // cerramos el archivo para todo
+
+	} else { // agregar o quitar espacio
+		add = Conversion(unit, add)
+
+		Arch, err := AbrirArchivo(ruta)
+		if err != nil {
+			return
+		}
+		var Editable structs.MBR
+		LeerArchivo(Arch, &Editable, 0)
+		for i := 0; i < 4; i++ {
+			if Editable.Partitions[i].Name == *&name1 {
+				Editable.Partitions[i].Size += int32(add)
+			}
+		}
+		Escribir(Arch, Editable, 0) // sobrescribimos
+		defer Arch.Close()          // cerramos el archivo para todo
 	}
 }

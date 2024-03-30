@@ -17,6 +17,12 @@ func main() {
 	case strings.EqualFold(os.Args[1], "fdisk"):
 		FDisk()
 		os.Exit(1)
+	case strings.EqualFold(os.Args[1], "Mount"):
+		Mount()
+		os.Exit(1)
+	case strings.EqualFold(os.Args[1], "Mkfs"):
+		MKfs()
+		os.Exit(1)
 	}
 
 }
