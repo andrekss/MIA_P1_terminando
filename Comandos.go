@@ -250,3 +250,22 @@ func MKfs() {
 		i += 1
 	}
 }
+
+func Execute() { // go run *.go Execute -path=./Execute/prueba.adsj
+	path := flag.String("path", "", "dirección del archivo")
+
+	flag.CommandLine.Parse(os.Args[2:])
+
+	file, err := build.AbrirArchivo(*path)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	defer file.Close()
+
+	build.Analizar(file)
+}
+
+func Rep() {
+
+}

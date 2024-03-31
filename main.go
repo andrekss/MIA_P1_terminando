@@ -23,6 +23,12 @@ func main() {
 	case strings.EqualFold(os.Args[1], "Mkfs"):
 		MKfs()
 		os.Exit(1)
+	case strings.EqualFold(os.Args[1], "Execute"):
+		Execute()
+		os.Exit(1)
+	case strings.EqualFold(os.Args[1], "Rep"):
+		Rep()
+		os.Exit(1)
 	}
 
 }

@@ -3,7 +3,6 @@ package build
 import (
 	"encoding/binary"
 	"fmt"
-	"io"
 	"os"
 )
 
@@ -75,26 +74,15 @@ func Escribir(file *os.File, data interface{}, position int64) error {
 	//file.Seek(0, io.SeekCurrent) // Obtener la posición inicial
 	//imprimirPos(*file)
 	file.Seek(position, 0)
+
 	err := binary.Write(file, binary.LittleEndian, data)
 	if err != nil {
 		fmt.Println("Err objeto", err)
 		return err
 	}
 
-	imprimirPos(*file)
-
+	//imprimirPos(*file)
 	//file.Seek(0, io.SeekCurrent) // Obtener la posición final
 
 	return nil
-}
-
-func imprimirPos(file os.File) {
-
-	endPos, err := file.Seek(0, io.SeekCurrent) // Obtener la posición final
-	if err != nil {
-		fmt.Println("Err seek:", err)
-	}
-
-	fmt.Println("Posición final del objeto:", endPos)
-
 }

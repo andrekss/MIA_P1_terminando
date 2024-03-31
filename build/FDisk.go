@@ -81,6 +81,7 @@ func Conversion(unit string, add int) int {
 }
 
 func Funcionalidades(driveletter string, delete string, name1 [16]byte, Partici√≥n structs.Partition, ruta string, add int, unit string) {
+
 	if strings.EqualFold(delete, "Full") { // eiminar partici√≥n
 		EliminarParticiones(driveletter, name1)
 	} else if add == 0 { // agregar partici√≥n
@@ -105,7 +106,8 @@ func Funcionalidades(driveletter string, delete string, name1 [16]byte, Partici√
 			}
 		}
 		Escribir(Arch, Editable, 0) // sobrescribimos
-		defer Arch.Close()          // cerramos el archivo para todo
+
+		defer Arch.Close() // cerramos el archivo para todo
 
 	} else { // agregar o quitar espacio
 		add = Conversion(unit, add)
@@ -124,4 +126,8 @@ func Funcionalidades(driveletter string, delete string, name1 [16]byte, Partici√
 		Escribir(Arch, Editable, 0) // sobrescribimos
 		defer Arch.Close()          // cerramos el archivo para todo
 	}
+}
+
+func Part_Extendida_EBR() {
+
 }
