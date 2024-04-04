@@ -1,10 +1,12 @@
 package Reportes
 
 import (
+	"bytes"
 	"fmt"
 	"log"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
 
 	"main.go/build"
@@ -27,24 +29,21 @@ func CreandoEstructura(NombreReporte, id string) [][]string {
 			break
 		}
 
-		//fmt.Println(revision.Tamaño)
-		//fmt.Println(revision.Fecha[:])
-		//fmt.Println(revision.Signature)
-
-		tabla = append(tabla, []string{"Tamaño", "2"})
+		tabla = append(tabla, []string{"Tamaño", strconv.FormatInt(int64(revision.Tamaño), 10)})
 		tabla = append(tabla, []string{"Fecha de creación", string(revision.Fecha[:])})
-		tabla = append(tabla, []string{"Signature", "12"})
-		/*
-			for i := 0; i < 4; i++ { // 4 particiones
-				tabla = append(tabla, []string{"Partición"})
-				tabla = append(tabla, []string{"Status", string(revision.Partitions[i].Status[0])})
-				tabla = append(tabla, []string{"Tipo", string(revision.Partitions[i].Tipo[0])})
-				tabla = append(tabla, []string{"Fit", string(revision.Partitions[i].Fit[0])})
-				tabla = append(tabla, []string{"Start", string(revision.Partitions[i].Start)})
-				tabla = append(tabla, []string{"Size", string(revision.Partitions[i].Size)})
-				tabla = append(tabla, []string{"Size", string(revision.Partitions[i].Name[:])})
-			}
-		*/
+		tabla = append(tabla, []string{"Signature", strconv.FormatInt(int64(revision.Signature), 10)})
+
+		for i := 0; i < 4; i++ { // 4 particiones
+			nameBytes := bytes.TrimRight(revision.Partitions[i].Name[:], "\x00")
+
+			tabla = append(tabla, []string{"----Partición----"})
+			tabla = append(tabla, []string{"Status", string(revision.Partitions[i].Status[0])})
+			tabla = append(tabla, []string{"Tipo", string(revision.Partitions[i].Tipo[0])})
+			tabla = append(tabla, []string{"Fit", string(revision.Partitions[i].Fit[0])})
+			tabla = append(tabla, []string{"Start", strconv.FormatInt(int64(revision.Partitions[i].Start), 10)})
+			tabla = append(tabla, []string{"Size", strconv.FormatInt(int64(revision.Partitions[i].Size), 10)})
+			tabla = append(tabla, []string{"Nombre", string(nameBytes)})
+		}
 
 		return tabla
 	}
@@ -72,7 +71,7 @@ func Reportes(tableData [][]string, path string) {
 	dot += "}\n"
 
 	// Generar el archivo DOT
-	err := EscribirArchivo("tabla.dot", dot)
+	err := EscribirArchivo(".dot", dot)
 	if err != nil {
 		log.Fatal("Error al escribir el archivo DOT:", err)
 	}

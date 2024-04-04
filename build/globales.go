@@ -28,13 +28,23 @@ func Analizar(file *os.File) {
 	for scanner.Scan() {
 
 		comando := strings.TrimSpace(scanner.Text())
+		if comando == "" {
+			continue // Saltar a la siguiente iteración si la línea está vacía
+		}
 		if comando[0] != '#' {
-			comando = "go run *.go" + comando
+			comando = "go run *.go " + comando
+
 			// Ejecutar el comando en la consola
 			cmd := exec.Command("bash", "-c", comando)
+			cmd.Stdin = os.Stdin
+
 			cmd.Stdout = os.Stdout
 			cmd.Stderr = os.Stderr
 			cmd.Run()
+
+			//cmd.Stdout = os.Stdout
+			//cmd.Stderr = os.Stderr
+
 		}
 	}
 

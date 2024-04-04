@@ -100,9 +100,11 @@ func Funcionalidades(driveletter string, delete string, name1 [16]byte, Partici�
 		// 4 particiones
 		for i := 0; i < 4; i++ {
 			if Editable.Partitions[i].Size == 0 {
+
 				Editable.Partitions[i] = Partición // agregamos la partición
 
-				fmt.Println(Editable.Partitions[i])
+				//fmt.Println(Editable.Partitions[i])
+				break
 			}
 		}
 		Escribir(Arch, Editable, 0) // sobrescribimos

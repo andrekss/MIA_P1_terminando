@@ -32,13 +32,23 @@ func CrearArchivo(TamanhoArchivo int) *os.File {
 			return Arch
 		}
 
-		// Llenar el archivo con la cantidad de 0s especificada
+		/* Llenar el archivo con la cantidad de 0s especificada
 		for i := 0; i < TamanhoArchivo; i++ {
 			err := Escribir(Arch, byte(0), int64(i))
 			if err != nil {
 				fmt.Println("Error: ", err)
 			}
+		}*/
+
+		arreglo := make([]byte, 1024)
+		// create array of byte(0)
+		for i := 0; i <= TamanhoArchivo/1024; i++ {
+			err := Escribir(Arch, arreglo, int64(i*1024))
+			if err != nil {
+				fmt.Println("Error: ", err)
+			}
 		}
+
 		//ceros := make([]byte, TamanhoArchivo)
 		//arch.Write(ceros)
 
