@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"main.go/build"
+	"main.go/build/Reportes"
 	"main.go/structs"
 )
 
@@ -152,7 +153,7 @@ func Mount() { // go run *.go mount -driveletter=A -name=Particion1
 
 	var index int = -1
 	var count = 0
-	// buscamos la partición especidifica
+	// buscamos la partición especifica
 	for i := 0; i < 4; i++ {
 		if MBR.Partitions[i].Size != 0 {
 			count++
@@ -163,7 +164,7 @@ func Mount() { // go run *.go mount -driveletter=A -name=Particion1
 		}
 	}
 
-	// id = DriveLetter + Correlative + 19
+	// id = DriveLetter + Correlative + 80
 
 	id := strings.ToUpper(*driveletter) + strconv.Itoa(count) + "80"
 
@@ -221,7 +222,6 @@ func Unmount() { // go run *.go Unmount -id=A180
 }
 
 func MKfs() {
-
 	id := flag.String("id", "", "id partición montada")
 	//types := flag.String("type", "Full", "tipo de formateo")
 	//fs := flag.String("fs", "2fs", "Formateo a otro sistema")
@@ -266,6 +266,34 @@ func Execute() { // go run *.go Execute -path=./Execute/prueba.adsj
 	build.Analizar(file)
 }
 
-func Rep() {
+func Rep() { //go run *.go rep -name=MBR -path=./reporte -id=A080
+	name := flag.String("name", "0", "nombre del reporte")
+	path := flag.String("path", "", "ubicación a generar el reporte")
+	id := flag.String("id", "", "id de la partición")
+	// opcional
+	//	ruta := flag.String("ruta", "K", "Opcional")
+	flag.CommandLine.Parse(os.Args[2:])
+
+	tabla := Reportes.CreandoEstructura(*name, *id)
+	Reportes.Reportes(tabla, *path)
+
+	//*ruta = *ruta
+
+}
+
+func Login() {
+	usuario := "Andres"
+	contraseña := "HOLAmundo"
+
+	user := flag.String("user", "", "Usuario")
+	pass := flag.String("pass", "", "contraseña")
+	//	id := flag.String("id", "", "id")
+
+	flag.CommandLine.Parse(os.Args[2:])
+
+	if *user == usuario && *pass == contraseña {
+	} else {
+		fmt.Print("Usuario desconocido")
+	}
 
 }

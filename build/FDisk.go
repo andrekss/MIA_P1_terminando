@@ -127,7 +127,3 @@ func Funcionalidades(driveletter string, delete string, name1 [16]byte, Partici√
 		defer Arch.Close()          // cerramos el archivo para todo
 	}
 }
-
-func Part_Extendida_EBR() {
-
-}

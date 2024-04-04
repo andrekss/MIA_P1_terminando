@@ -29,6 +29,9 @@ func main() {
 	case strings.EqualFold(os.Args[1], "Rep"):
 		Rep()
 		os.Exit(1)
+	case strings.EqualFold(os.Args[1], "Login"):
+		Login()
+		os.Exit(1)
 	}
 
 }
