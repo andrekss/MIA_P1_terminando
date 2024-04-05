@@ -1,7 +1,7 @@
 # hola sin nombre
 
 mkdisk -size=30 -fit=FF -unit=K
-mkdisk -size=50 -fit=FF -unit=M
+mkdisk -size=50 -fit=FF -unit=M #hola
 
 mkdisk -size=10 -fit=FF -unit=K
 
