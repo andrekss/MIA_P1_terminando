@@ -1,0 +1,9 @@
+digraph G {
+rankdir="LR";
+node [shape=plaintext]
+node [fontname="Arial"]
+edge [style=invis]
+tbl [label=<<table border="1" cellspacing="0">
+<tr><td>Reporte MBR</td></tr>
+</table>>, ];
+}

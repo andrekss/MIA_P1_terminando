@@ -115,22 +115,22 @@ mount -driveletter=A -name=Part5
 mount -driveletter=A -name=Part1 
 #A080 -> id1 -> cambiar el A080 por el ID que a ustedes les genera
 mount -driveletter=A -name=Part2 
-#191b -> id2 -> cambiar el 191b por el ID que a ustedes les genera
+#B080 -> id2 -> cambiar el B080 por el ID que a ustedes les genera
 mount -driveletter=A -name=Part1 
 #ERR PARTICION YA MONTADA
 #DISCO 2
 mount -driveletter=B -name=Part11 
 #ERR MONTAR EXTENDIDA
 mount -driveletter=B -name=Part8 
-#192a -> id3 -> cambiar el 192a por el ID que a ustedes les genera
+#A180 -> id3 -> cambiar el A180 por el ID que a ustedes les genera
 mount -driveletter=B -name=Part9 
-#192b -> id4 -> cambiar el 192b por el ID que a ustedes les genera
+#A180 -> id4 -> cambiar el A180 por el ID que a ustedes les genera
 #DISCO 3
 mount -driveletter=C -name=Part26 
-#193a -> id5 -> cambiar el 193a por el ID que a ustedes les genera
+#A280 -> id5 -> cambiar el A280 por el ID que a ustedes les genera
 #DISCO 5
 mount -driveletter=E -name=Part31 
-#194a -> id6 -> cambiar el 194a por el ID que a ustedes les genera
+#A380 -> id6 -> cambiar el A380 por el ID que a ustedes les genera
 
 
 #DESMONTAR PARTICIONES---------------------------------------------------
@@ -141,41 +141,41 @@ unmount -id=A080
 unmount -id=A080 
 #ERR PARTICION YA DESMONTADA -> id1
 #DISCO 2
-unmount -id=192b 
+unmount -id=A180 
 #-> id4
 
 
 #REPORTES---------------------------------------------------
 #DISCO 1
-rep -id=A080 -Path=reporte1.png -name=mbr 
+rep -id=A080 -path=reporte1.png -name=mbr 
 #ERR ID NO ENCONTRADO -> id1
-rep -id=191b -Path=reporte2.png -name=disk 
+rep -id=B080 -path=reporte2.png -name=disk 
 #-> id2
-rep -id=191b -Path=reporte3.png -name=mbr 
+rep -id=B080 -path=reporte3.png -name=mbr 
 #-> id2
 
 #DISCO 2
-rep -id=192b -Path=reporte4.png -name=mbr 
+rep -id=B180 -path=reporte4.png -name=mbr 
 #ERR ID NO ENCONTRADO -> id4
-rep -id=192a -Path=reporte5.png -name=disk 
+rep -id=A180 -path=reporte5.png -name=disk 
 #-> id3
-rep -id=192a -Path=reporte6.png -name=mbr 
+rep -id=A180 -path=reporte6.png -name=mbr 
 #-> id3
 
 #DISCO 3
-rep -id=IDx -Path=reporte7.png -name=mbr 
+rep -id=IDx -path=reporte7.png -name=mbr 
 #ERR ID NO ENCONTRADO
-rep -id=193a -Path=reporte8.png -name=disk 
+rep -id=A280 -path=reporte8.png -name=disk 
 #-> id5
-rep -id=193a -Path=reporte9.png -name=mbr 
+rep -id=A280 -path=reporte9.png -name=mbr 
 #-> id5
 
 #DISCO 5
-rep -id=IDx -Path=reporte10.png -name=mbr 
+rep -id=IDx -path=reporte10.png -name=mbr 
 #ERR ID NO ENCONTRADO
-rep -id=194a -Path=reporte11.png -name=disk 
+rep -id=A380 -path=reporte11.png -name=disk 
 #-> id6
-rep -id=194a -Path=reporte12.png -name=mbr 
+rep -id=A380 -path=reporte12.png -name=mbr 
 #-> id6
 
 #exec -path=../basico.mia

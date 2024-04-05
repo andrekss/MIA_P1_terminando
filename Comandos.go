@@ -125,6 +125,7 @@ func FDisk() { //go run *.go fdisk -size=300 -driveletter=A -name=Particion1 -un
 
 	fits := []byte(*fit)
 	copy(Partición.Fit[:], fits)
+	copy(Partición.Status[:], "0") // verifica que esta montada
 	// fin del llenado de la nueva partición
 
 	// aqui ejecutamos todo el comando
@@ -275,7 +276,7 @@ func Rep() { //go run *.go rep -name=MBR -path=./reporte -id=A080
 	flag.CommandLine.Parse(os.Args[2:])
 
 	tabla := Reportes.CreandoEstructura(*name, *id)
-	Reportes.Reportes(tabla, *path)
+	Reportes.Reportes(tabla, *path, *id)
 
 	//*ruta = *ruta
 

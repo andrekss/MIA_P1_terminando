@@ -50,7 +50,7 @@ func CreandoEstructura(NombreReporte, id string) [][]string {
 	return tabla
 }
 
-func Reportes(tableData [][]string, path string) {
+func Reportes(tableData [][]string, path, id string) {
 	// Crear una cadena DOT que representa la tabla
 	dot := "digraph G {\n"
 	dot += "rankdir=\"LR\";\n"
@@ -71,7 +71,7 @@ func Reportes(tableData [][]string, path string) {
 	dot += "}\n"
 
 	// Generar el archivo DOT
-	err := EscribirArchivo(".dot", dot)
+	err := EscribirArchivo(id+".dot", dot)
 	if err != nil {
 		log.Fatal("Error al escribir el archivo DOT:", err)
 	}
